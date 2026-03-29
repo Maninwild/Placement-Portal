@@ -1,0 +1,55 @@
+CREATE TABLE IF NOT EXISTS users (
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(200) NOT NULL,
+email VARCHAR(255) UNIQUE,
+sap_id VARCHAR(50) UNIQUE,
+password_hash VARCHAR(255) NOT NULL,
+role ENUM('student','teacher','admin') NOT NULL DEFAULT 'student',
+mobile VARCHAR(20),
+age INT,
+gender VARCHAR(20),
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS tests (
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(255) NOT NULL,
+type ENUM('aptitude','coding','verbal') DEFAULT 'aptitude',
+duration_seconds INT NOT NULL,
+total_questions INT NOT NULL,
+difficulty VARCHAR(50),
+meta JSON,
+created_by INT,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+);
+CREATE TABLE IF NOT EXISTS questions (
+id INT AUTO_INCREMENT PRIMARY KEY,
+test_id INT NOT NULL,
+question_text TEXT,
+options JSON,
+correct_answer JSON,
+marks INT DEFAULT 1,
+meta JSON,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (test_id) REFERENCES tests(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS submissions (
+id INT AUTO_INCREMENT PRIMARY KEY,
+test_id INT NOT NULL,
+user_id INT NOT NULL,
+time_taken_seconds INT DEFAULT 0,
+score DOUBLE DEFAULT 0,
+details JSON,
+status VARCHAR(50) DEFAULT 'submitted',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (test_id) REFERENCES tests(id) ON DELETE CASCADE,
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS test_audit (
+id INT AUTO_INCREMENT PRIMARY KEY,
+submission_id INT NOT NULL,
+event_type VARCHAR(100),
+event_data JSON,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (submission_id) REFERENCES submissions(id) ON DELETE CASCADE
+);

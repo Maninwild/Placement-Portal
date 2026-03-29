@@ -1,0 +1,2628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRIST University - Student Placement Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Bottom Navigation Styles */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding: 20px 0;
+        }
+
+        .prev-btn, .next-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .prev-btn:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+        }
+
+        .next-btn {
+            background: #3b82f6;
+        }
+
+        .next-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .prev-btn::before {
+            content: "←";
+            font-size: 18px;
+        }
+
+        .next-btn::after {
+            content: "→";
+            font-size: 18px;
+        }
+
+        .prev-btn:disabled, .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            display: none;
+        }
+
+        .header.show {
+            display: block;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            color: #1e3a8a;
+            font-size: 24px;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+
+        /* Page Indicator */
+        .page-indicator {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .page-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .step.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .step.completed {
+            background: #10b981;
+            color: white;
+        }
+
+        .step-line {
+            width: 50px;
+            height: 2px;
+            background: #e5e5e5;
+        }
+
+        .step-line.completed {
+            background: #10b981;
+        }
+
+        /* Login Page */
+        .login-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            color: #1e3a8a;
+            font-size: 32px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .login-header p {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        /* Error states for form inputs */
+        .form-input.error {
+            border-color: #dc2626;
+            background-color: #fef2f2;
+        }
+
+        .form-input.valid {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+
+        /* Error message styling */
+        .error-message-field {
+            display: none;
+            color: #dc2626;
+            font-size: 13px;
+            margin-top: 5px;
+            padding-left: 5px;
+            font-weight: 500;
+        }
+
+        .error-message-field.show {
+            display: block;
+        }
+
+        .error-message-field::before {
+            content: "⚠ ";
+            margin-right: 4px;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #1e3a8a;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 600;
+        }
+
+        .login-btn:hover {
+            background: #1e40af;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 14px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            padding: 30px 0;
+        }
+
+        .dashboard.show {
+            display: block;
+        }
+
+        .dashboard-title {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-title h2 {
+            color: #1e3a8a;
+            font-size: 36px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .dashboard-title p {
+            color: #666;
+            font-size: 18px;
+        }
+
+        .test-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .test-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .test-section h3 {
+            color: #1e3a8a;
+            font-size: 28px;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #e5e5e5;
+            padding-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .test-item {
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .test-item:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .test-name {
+            font-size: 20px;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .test-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .test-detail span {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Enhanced Registration Form */
+        .registration {
+            display: none;
+            padding: 30px 0;
+        }
+
+        .registration.show {
+            display: block;
+        }
+
+        .registration-card {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .registration-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .registration-title h2 {
+            color: #1e3a8a;
+            font-size: 32px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .registration-title p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.3s;
+        }
+
+        .select-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .select-input.error {
+            border-color: #dc2626;
+            background-color: #fef2f2;
+        }
+
+        .select-input.valid {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+
+        .submit-btn {
+            background: #10b981;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+            font-weight: 600;
+        }
+
+        .submit-btn:hover {
+            background: #059669;
+        }
+
+        /* Enhanced Instructions */
+        .instructions {
+            display: none;
+            padding: 30px 0;
+        }
+
+        .instructions.show {
+            display: block;
+        }
+
+        .instructions-card {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .instructions-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .instructions-title h2 {
+            color: #1e3a8a;
+            font-size: 32px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .instructions-title p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .instructions-list {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .instructions-list li {
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #f8fafc;
+            border-left: 5px solid #3b82f6;
+            border-radius: 8px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .best-wishes {
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            color: #10b981;
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 2px dashed #10b981;
+        }
+
+        .start-test-btn {
+            background: #1e3a8a;
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+
+        .start-test-btn:hover {
+            background: #1e40af;
+        }
+
+        /* Question Navigator Legend */
+        .navigator-legend {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+
+        .legend-answered {
+            background: #10b981;
+        }
+
+        .legend-visited {
+            background: #f59e0b;
+        }
+
+        .legend-current {
+            background: #3b82f6;
+        }
+
+        .legend-unvisited {
+            background: white;
+            border: 2px solid #e5e5e5;
+        }
+
+        /* Enhanced Test Interface */
+        .test-interface {
+            display: none;
+            padding: 20px 0;
+            background: #f8fafc;
+        }
+
+        .test-interface.show {
+            display: block;
+        }
+
+        .test-header {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .test-info h3 {
+            color: #1e3a8a;
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .test-info p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .test-timer {
+            background: #f59e0b;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 22px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            transition: background 0.3s;
+        }
+
+        /* Fixed finish button - CORRECTED POSITIONING */
+        .finish-test-fixed {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 999;
+        }
+
+        .finish-test-fixed:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Fullscreen button - CORRECTED POSITIONING */
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: #3b82f6;
+            color: white;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 999;
+            display: none;
+        }
+
+        .fullscreen-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .fullscreen-btn::before {
+            content: "⛶";
+            margin-right: 4px;
+            font-size: 14px;
+        }
+
+        .test-content {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+            margin-bottom: 100px; /* Add margin to prevent overlap with fixed buttons */
+        }
+
+        .question-area {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .question-number {
+            font-size: 22px;
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 18px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .options {
+            list-style: none;
+        }
+
+        .option {
+            margin-bottom: 18px;
+        }
+
+        .option label {
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            background: #f8fafc;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .option label:hover {
+            background: #e0f2fe;
+            border-color: #3b82f6;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.3);
+        }
+
+        .option label.selected {
+            background: #dbeafe;
+            border-color: #3b82f6;
+            font-weight: 600;
+        }
+
+        /* Enhanced Navigator */
+        .navigator {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .navigator h4 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .question-numbers {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .question-btn {
+            padding: 12px;
+            border: 2px solid #e5e5e5;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .question-btn:hover {
+            background: #f0f9ff;
+            border-color: #3b82f6;
+        }
+
+        .question-btn.answered {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .question-btn.visited {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+
+        .question-btn.current {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+
+        .prev-question-btn {
+            background: #6b7280;
+            color: white;
+        }
+
+        .prev-question-btn:hover:not(:disabled) {
+            background: #4b5563;
+        }
+
+        .next-question-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .next-question-btn:hover:not(:disabled) {
+            background: #2563eb;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Enhanced Code Editor */
+        .code-editor {
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 25px 0;
+        }
+
+        .code-header {
+            background: #f8fafc;
+            padding: 15px 20px;
+            border-bottom: 2px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-header span {
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        .language-select {
+            padding: 8px 15px;
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .code-textarea {
+            width: 100%;
+            height: 350px;
+            padding: 20px;
+            border: none;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            background: #fafafa;
+        }
+
+        .code-actions {
+            padding: 20px;
+            background: #f8fafc;
+            border-top: 2px solid #e5e5e5;
+            display: flex;
+            gap: 15px;
+        }
+
+        .run-btn {
+            background: #10b981;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .run-btn:hover {
+            background: #059669;
+        }
+
+        .submit-code-btn {
+            background: #3b82f6;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .submit-code-btn:hover {
+            background: #2563eb;
+        }
+
+        /* Test Cases Section */
+        .test-cases {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 2px solid #e5e5e5;
+        }
+
+        .test-cases h5 {
+            color: #1e3a8a;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .test-case {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e5e5e5;
+        }
+
+        .test-case-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .test-case-content {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Thank You Page */
+        .thank-you {
+            display: none;
+            padding: 30px 0;
+        }
+
+        .thank-you.show {
+            display: block;
+        }
+
+        .thank-you-card {
+            background: white;
+            padding: 60px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .thank-you-icon {
+            font-size: 80px;
+            color: #10b981;
+            margin-bottom: 30px;
+        }
+
+        .thank-you-title h2 {
+            color: #1e3a8a;
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .thank-you-message {
+            color: #666;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .thank-you-message p {
+            margin-bottom: 15px;
+        }
+
+        .submission-details {
+            background: #f0fdf4;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            border: 2px solid #10b981;
+        }
+
+        .submission-details h3 {
+            color: #10b981;
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .detail-value {
+            color: #666;
+            font-family: 'Courier New', monospace;
+        }
+
+        .back-to-dashboard-btn {
+            background: #1e3a8a;
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+
+        .back-to-dashboard-btn:hover {
+            background: #1e40af;
+        }
+
+        /* Warning Modal */
+        .warning-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .warning-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .warning-title {
+            color: #dc2626;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .warning-text {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .warning-ok {
+            background: #dc2626;
+            color: white;
+            padding: 12px 35px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .test-content {
+                grid-template-columns: 1fr;
+                margin-bottom: 120px; /* More space on mobile */
+            }
+            
+            .navigator {
+                order: -1;
+            }
+            
+            .question-numbers {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .test-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .login-card, .registration-card, .instructions-card, .thank-you-card {
+                padding: 30px;
+            }
+
+            .dashboard-title h2 {
+                font-size: 28px;
+            }
+
+            .test-info h3 {
+                font-size: 24px;
+            }
+
+            .bottom-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .page-steps {
+                flex-wrap: wrap;
+            }
+
+            .finish-test-fixed {
+                bottom: 20px;
+                right: 15px;
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+
+            .fullscreen-btn {
+                bottom: 75px;
+                right: 15px;
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #10b981;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+        }
+
+        /* Timer Warning Colors */
+        .timer-warning {
+            background: #f59e0b !important;
+        }
+
+        .timer-critical {
+            background: #dc2626 !important;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Page Transition */
+        .page-container {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .page-container.fade-out {
+            opacity: 0;
+        }
+
+        .page-container.fade-in {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>CHRIST</h1>
+                    <p>CHRIST UNIVERSITY</p>
+                </div>
+                <div class="user-info">
+                    <span id="user-name">Student</span>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Page -->
+    <div class="login-page page-container" id="login-page">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>CHRIST</h1>
+                <p>Student Placement Portal</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="sap-id">SAP ID</label>
+                    <input type="text" id="sap-id" class="form-input" placeholder="Enter your SAP ID" value="2021001">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" value="password123">
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+                <div class="error-message" id="error-message">Invalid SAP ID or Password</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard page-container" id="dashboard">
+        <div class="container">
+            <!-- Page Indicator -->
+            <div class="page-indicator">
+                <div class="page-steps">
+                    <div class="step active">1</div>
+                    <div class="step-line"></div>
+                    <div class="step">2</div>
+                    <div class="step-line"></div>
+                    <div class="step">3</div>
+                    <div class="step-line"></div>
+                    <div class="step">4</div>
+                    <div class="step-line"></div>
+                    <div class="step">5</div>
+                </div>
+                <p>Dashboard → Registration → Instructions → Test → Thank You</p>
+            </div>
+
+            <div class="dashboard-title">
+                <h2>Student Placement Portal</h2>
+                <p>Welcome! Select a test to begin your placement assessment.</p>
+            </div>
+            
+            <div class="test-sections">
+                <div class="test-section">
+                    <h3>Available Tests</h3>
+                    <div class="test-item" onclick="startTest(1)">
+                        <div class="test-name">Placement Aptitude Test</div>
+                        <div class="test-details">
+                            <div class="test-detail">Duration: <span>5:00</span></div>
+                            <div class="test-detail">Starts In: <span>Available Now</span></div>
+                            <div class="test-detail">Ends In: <span>2 hours</span></div>
+                        </div>
+                    </div>
+                    <div class="test-item" onclick="startTest(2)">
+                        <div class="test-name">Coding Challenge</div>
+                        <div class="test-details">
+                            <div class="test-detail">Duration: <span>10:00</span></div>
+                            <div class="test-detail">Starts In: <span>Available Now</span></div>
+                            <div class="test-detail">Ends In: <span>3 hours</span></div>
+                        </div>
+                    </div>
+                    <div class="test-item" onclick="startTest(3)">
+                        <div class="test-name">Verbal Reasoning</div>
+                        <div class="test-details">
+                            <div class="test-detail">Duration: <span>7:30</span></div>
+                            <div class="test-detail">Starts In: <span>Available Now</span></div>
+                            <div class="test-detail">Ends In: <span>4 hours</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h3>Upcoming Tests</h3>
+                    <div class="test-item" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="test-name">Advanced Programming</div>
+                        <div class="test-details">
+                            <div class="test-detail">Duration: <span>90:00</span></div>
+                            <div class="test-detail">Starts In: <span>2 hours</span></div>
+                            <div class="test-detail">Ends In: <span>5 hours</span></div>
+                        </div>
+                    </div>
+                    <div class="test-item" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="test-name">Technical Interview Prep</div>
+                        <div class="test-details">
+                            <div class="test-detail">Duration: <span>60:00</span></div>
+                            <div class="test-detail">Starts In: <span>1 day</span></div>
+                            <div class="test-detail">Ends In: <span>2 days</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Form with Enhanced Validation -->
+    <div class="registration page-container" id="registration">
+        <div class="container">
+            <!-- Page Indicator -->
+            <div class="page-indicator">
+                <div class="page-steps">
+                    <div class="step completed">1</div>
+                    <div class="step-line completed"></div>
+                    <div class="step active">2</div>
+                    <div class="step-line"></div>
+                    <div class="step">3</div>
+                    <div class="step-line"></div>
+                    <div class="step">4</div>
+                    <div class="step-line"></div>
+                    <div class="step">5</div>
+                </div>
+                <p>Dashboard → Registration → Instructions → Test → Thank You</p>
+            </div>
+
+            <div class="registration-card">
+                <div class="registration-title">
+                    <h2>Student Registration</h2>
+                    <p>Please fill in your details before starting the test</p>
+                </div>
+                <form id="registration-form">
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label class="form-label" for="student-name">Name</label>
+                            <input type="text" id="student-name" class="form-input" placeholder="Enter your full name" required>
+                            <div class="error-message-field" id="name-error"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Id</label>
+                            <input type="email" id="email" class="form-input" placeholder="Enter your email address" required>
+                            <div class="error-message-field" id="email-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="age">Age</label>
+                            <input type="number" id="age" class="form-input" placeholder="Enter your age" min="18" max="65" required>
+                            <div class="error-message-field" id="age-error"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="gender">Gender</label>
+                            <select id="gender" class="select-input" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div class="error-message-field" id="gender-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="mobile">Mobile Number</label>
+                            <input type="tel" id="mobile" class="form-input" placeholder="Enter your mobile number" required>
+                            <div class="error-message-field" id="mobile-error"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <button class="prev-btn" onclick="navigateToPage('dashboard')">Previous</button>
+                <button class="next-btn" onclick="navigateToPage('instructions')" id="reg-next-btn" disabled>Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions with Bottom Navigation and Color Legend -->
+    <div class="instructions page-container" id="instructions">
+        <div class="container">
+            <!-- Page Indicator -->
+            <div class="page-indicator">
+                <div class="page-steps">
+                    <div class="step completed">1</div>
+                    <div class="step-line completed"></div>
+                    <div class="step completed">2</div>
+                    <div class="step-line completed"></div>
+                    <div class="step active">3</div>
+                    <div class="step-line"></div>
+                    <div class="step">4</div>
+                    <div class="step-line"></div>
+                    <div class="step">5</div>
+                </div>
+                <p>Dashboard → Registration → Instructions → Test → Thank You</p>
+            </div>
+
+            <div class="instructions-card">
+                <div class="instructions-title">
+                    <h2>Instructions</h2>
+                    <p>Please read the following instructions carefully before starting the test</p>
+                </div>
+                <ol class="instructions-list">
+                    <li><strong>1.</strong> Only full-screen mode is available for students to give tests.</li>
+                    <li><strong>2.</strong> If a student attempts to reduce the screen, a message will appear stating that the student has only 10 seconds to return to full-screen mode before the test is auto-submitted and the result page is presented.</li>
+                    <li><strong>3.</strong> If a student refreshes the screen by accident, his progress is not lost. The progress will be saved, and the timer will be reset to where it was before being refreshed.</li>
+                    <li><strong>4.</strong> If a student tries to switch tabs, desktops, or browsers during the test, a warning will appear twice, indicating that the screen has been changed. If the student continues to try to move the tab despite multiple warnings, his test will be auto-submitted.</li>
+                    <li><strong>5.</strong> A student cannot take more than one test at the same time. If he tries to open the same test in a different tab, he will be instantly logged out of the one he just closed.</li>
+                    <li><strong>6.</strong> In the Question Navigator: <span style="color: #10b981; font-weight: bold;">Green boxes</span> indicate answered questions, <span style="color: #f59e0b; font-weight: bold;">Orange boxes</span> indicate questions that have been visited but not answered, <span style="color: #3b82f6; font-weight: bold;">Blue boxes</span> indicate the current question, and white boxes indicate unvisited questions.</li>
+                    <li><strong>7.</strong> Your test results will be reviewed by teachers and available through the teacher portal after submission.</li>
+                </ol>
+                <div class="best-wishes">
+                    print("ALL THE BEST")
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <button class="prev-btn" onclick="navigateToPage('registration')">Previous</button>
+                <button class="start-test-btn" onclick="proceedToTest()">Start Test</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Interface with Fixed Buttons - NO OVERLAP -->
+    <div class="test-interface page-container" id="test-interface">
+        <div class="container">
+            <!-- Page Indicator -->
+            <div class="page-indicator">
+                <div class="page-steps">
+                    <div class="step completed">1</div>
+                    <div class="step-line completed"></div>
+                    <div class="step completed">2</div>
+                    <div class="step-line completed"></div>
+                    <div class="step completed">3</div>
+                    <div class="step-line completed"></div>
+                    <div class="step active">4</div>
+                    <div class="step-line"></div>
+                    <div class="step">5</div>
+                </div>
+                <p>Dashboard → Registration → Instructions → Test → Thank You</p>
+            </div>
+
+            <div class="test-header">
+                <div class="test-info">
+                    <h3 id="test-title">Test Name</h3>
+                    <p id="test-details">Question 1 of 12 | Difficulty: Easy</p>
+                </div>
+                <div class="test-timer" id="test-timer">5:00:00</div>
+            </div>
+            
+            <div class="test-content">
+                <div class="question-area">
+                    <div class="question-header">
+                        <div class="question-number" id="question-number">Question 1</div>
+                    </div>
+                    <div class="question-text" id="question-text">Question will appear here</div>
+                    <div id="question-options"></div>
+                    <div id="code-editor-container"></div>
+                    <div id="test-cases-container"></div>
+                </div>
+                
+                <div class="navigator">
+                    <h4>Question Navigator</h4>
+                    
+                    <!-- Color Legend -->
+                    <div class="navigator-legend">
+                        <div class="legend-item">
+                            <div class="legend-color legend-answered"></div>
+                            <span>Answered</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-visited"></div>
+                            <span>Visited (Not Answered)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-current"></div>
+                            <span>Current Question</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-unvisited"></div>
+                            <span>Not Visited</span>
+                        </div>
+                    </div>
+
+                    <div class="question-numbers" id="question-numbers"></div>
+                    <div class="navigation-buttons">
+                        <button class="nav-btn prev-question-btn" id="prev-question-btn" onclick="previousQuestion()">Previous</button>
+                        <button class="nav-btn next-question-btn" id="next-question-btn" onclick="nextQuestion()">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fixed Buttons - PROPERLY POSITIONED -->
+        <button class="finish-test-fixed" id="finish-test-fixed" onclick="finishTest()">Finish Test</button>
+        <button class="fullscreen-btn" id="fullscreen-btn" onclick="enterFullscreen()">Fullscreen</button>
+    </div>
+
+    <!-- Thank You Page -->
+    <div class="thank-you page-container" id="thank-you">
+        <div class="container">
+            <!-- Page Indicator -->
+            <div class="page-indicator">
+                <div class="page-steps">
+                    <div class="step completed">1</div>
+                    <div class="step-line completed"></div>
+                    <div class="step completed">2</div>
+                    <div class="step-line completed"></div>
+                    <div class="step completed">3</div>
+                    <div class="step-line completed"></div>
+                    <div class="step completed">4</div>
+                    <div class="step-line completed"></div>
+                    <div class="step active">5</div>
+                </div>
+                <p>Dashboard → Registration → Instructions → Test → Thank You</p>
+            </div>
+
+            <div class="thank-you-card">
+                <div class="thank-you-icon">✅</div>
+                <div class="thank-you-title">
+                    <h2>Test Submitted Successfully!</h2>
+                </div>
+                <div class="thank-you-message">
+                    <p>Congratulations! You have successfully completed your placement test.</p>
+                    <p>Your responses have been saved and will be evaluated by our academic team.</p>
+                    <p>Results will be available through your teachers shortly.</p>
+                </div>
+                
+                <div class="submission-details">
+                    <h3>Submission Details</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Test Name:</span>
+                        <span class="detail-value" id="submitted-test-name">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Student Name:</span>
+                        <span class="detail-value" id="submitted-student-name">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Submission Time:</span>
+                        <span class="detail-value" id="submission-time">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Time Taken:</span>
+                        <span class="detail-value" id="submitted-time-taken">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Questions Attempted:</span>
+                        <span class="detail-value" id="submitted-questions-answered">-</span>
+                    </div>
+                </div>
+
+                <button class="back-to-dashboard-btn" onclick="navigateToPage('dashboard')">Take Another Test</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Modal -->
+    <div class="warning-modal" id="warning-modal">
+        <div class="warning-content">
+            <h3 class="warning-title">⚠️ Warning!</h3>
+            <p class="warning-text" id="warning-text">Please return to full screen mode. You have been warned <span id="warning-count">1</span> time(s).</p>
+            <button class="warning-ok" onclick="closeWarning()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let currentUser = null;
+        let currentTest = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let visitedQuestions = new Set(); // Track visited questions
+        let testStartTime = null;
+        let testTimer = null;
+        let timeRemaining = 0;
+        let tabSwitchCount = 0;
+        let fullScreenWarnings = 0;
+        let currentPage = 'login-page';
+
+        // Validation state
+        let validationState = {
+            name: false,
+            email: false,
+            age: false,
+            gender: false,
+            mobile: false
+        };
+
+        // Test Data
+        const testData = {
+            1: {
+                id: 1,
+                name: "Aptitude Test",
+                type: "aptitude",
+                duration: 300, // 5 minutes in seconds
+                totalQuestions: 12,
+                difficulty: "Easy",
+                questions: [
+                    {
+                        id: 1,
+                        question: "If a train travels 120 km in 2 hours, what is its average speed?",
+                        options: ["50 km/h", "60 km/h", "70 km/h", "80 km/h"],
+                        correct: 1
+                    },
+                    {
+                        id: 2,
+                        question: "What is 25% of 80?",
+                        options: ["15", "20", "25", "30"],
+                        correct: 1
+                    },
+                    {
+                        id: 3,
+                        question: "A man got Rs. 130 less, as simple interest, when he invested Rs. 2000 for 4 years as compared to investing Rs. 2250 for same duration. What is the rate of interest?",
+                        options: ["12%", "12.5%", "13.5%", "13%"],
+                        correct: 1
+                    },
+                    {
+                        id: 4,
+                        question: "If 20% of a number is 50, what is 75% of that number?",
+                        options: ["187.5", "175", "200", "225"],
+                        correct: 0
+                    },
+                    {
+                        id: 5,
+                        question: "The ratio of 3:4 is the same as:",
+                        options: ["6:8", "9:16", "12:15", "15:18"],
+                        correct: 0
+                    },
+                    {
+                        id: 6,
+                        question: "What comes next in the series: 2, 6, 18, 54, ?",
+                        options: ["108", "162", "216", "270"],
+                        correct: 1
+                    },
+                    {
+                        id: 7,
+                        question: "If x + y = 10 and x - y = 2, what is the value of x?",
+                        options: ["4", "5", "6", "8"],
+                        correct: 2
+                    },
+                    {
+                        id: 8,
+                        question: "A rectangle has length 8 cm and width 6 cm. What is its area?",
+                        options: ["42 sq cm", "48 sq cm", "52 sq cm", "56 sq cm"],
+                        correct: 1
+                    },
+                    {
+                        id: 9,
+                        question: "What is the next prime number after 17?",
+                        options: ["18", "19", "20", "21"],
+                        correct: 1
+                    },
+                    {
+                        id: 10,
+                        question: "If 3x = 21, what is the value of x?",
+                        options: ["6", "7", "8", "9"],
+                        correct: 1
+                    },
+                    {
+                        id: 11,
+                        question: "What is 15% of 200?",
+                        options: ["25", "30", "35", "40"],
+                        correct: 1
+                    },
+                    {
+                        id: 12,
+                        question: "The average of 5 numbers is 20. What is their sum?",
+                        options: ["80", "90", "100", "110"],
+                        correct: 2
+                    }
+                ]
+            },
+            2: {
+                id: 2,
+                name: "Coding Test",
+                type: "coding",
+                duration: 600, // 10 minutes
+                totalQuestions: 3,
+                difficulty: "Medium",
+                questions: [
+                    {
+                        id: 1,
+                        title: "Two Sum",
+                        description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.",
+                        example: "Input: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: Because nums[0] + nums[1] == 9, we return [0, 1].",
+                        constraints: "2 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9\n-10^9 <= target <= 10^9\nOnly one valid answer exists.",
+                        starterCode: `class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        \n    }\n};`,
+                        language: "cpp",
+                        testCases: [
+                            { input: "nums = [2,7,11,15], target = 9", output: "[0,1]" },
+                            { input: "nums = [3,2,4], target = 6", output: "[1,2]" },
+                            { input: "nums = [3,3], target = 6", output: "[0,1]" }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        title: "Palindrome Number",
+                        description: "Given an integer x, return true if x is palindrome integer. An integer is a palindrome when it reads the same backward as forward.",
+                        example: "Input: x = 121\nOutput: true\nExplanation: 121 reads as 121 from left to right and from right to left.",
+                        constraints: "-2^31 <= x <= 2^31 - 1",
+                        starterCode: `class Solution {\npublic:\n    bool isPalindrome(int x) {\n        \n    }\n};`,
+                        language: "cpp",
+                        testCases: [
+                            { input: "x = 121", output: "true" },
+                            { input: "x = -121", output: "false" },
+                            { input: "x = 10", output: "false" }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        title: "Reverse Integer",
+                        description: "Given a signed 32-bit integer x, return x with its digits reversed. If reversing x causes the value to go outside the signed 32-bit integer range [-2^31, 2^31 - 1], then return 0.",
+                        example: "Input: x = 123\nOutput: 321\nInput: x = -123\nOutput: -321",
+                        constraints: "-2^31 <= x <= 2^31 - 1",
+                        starterCode: `class Solution {\npublic:\n    int reverse(int x) {\n        \n    }\n};`,
+                        language: "cpp",
+                        testCases: [
+                            { input: "x = 123", output: "321" },
+                            { input: "x = -123", output: "-321" },
+                            { input: "x = 120", output: "21" }
+                        ]
+                    }
+                ]
+            },
+            3: {
+                id: 3,
+                name: "Verbal Reasoning",
+                type: "verbal",
+                duration: 450, // 7.5 minutes
+                totalQuestions: 10,
+                difficulty: "Easy",
+                questions: [
+                    {
+                        id: 1,
+                        passage: "Climate change represents one of the most pressing challenges of our time. Rising global temperatures, melting ice caps, and extreme weather events are clear indicators of environmental shifts. Scientists worldwide agree that human activities, particularly the burning of fossil fuels, are the primary drivers of these changes. The consequences extend beyond environmental concerns, affecting economic stability, food security, and human health. Immediate action is required to mitigate these effects through renewable energy adoption, conservation efforts, and international cooperation.",
+                        question: "According to the passage, what is the primary cause of climate change?",
+                        options: [
+                            "Natural weather patterns",
+                            "Human activities, especially burning fossil fuels",
+                            "Solar radiation changes",
+                            "Ocean current variations"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        id: 2,
+                        passage: "The digital revolution has transformed how we communicate, work, and access information. Social media platforms connect billions of people globally, enabling instant communication and information sharing. However, this connectivity comes with challenges including privacy concerns, misinformation spread, and digital addiction. Educational institutions are adapting by integrating technology into curricula, while businesses leverage digital tools for enhanced productivity and global reach.",
+                        question: "What challenge is NOT mentioned in relation to digital connectivity?",
+                        options: [
+                            "Privacy concerns",
+                            "Misinformation spread",
+                            "Digital addiction",
+                            "Language barriers"
+                        ],
+                        correct: 3
+                    },
+                    {
+                        id: 3,
+                        passage: "Artificial Intelligence (AI) is rapidly advancing across various sectors, from healthcare diagnostics to autonomous vehicles. Machine learning algorithms can process vast amounts of data to identify patterns and make predictions with increasing accuracy. While AI offers tremendous potential for improving efficiency and solving complex problems, concerns about job displacement, algorithmic bias, and ethical implications persist. Successful AI implementation requires careful consideration of these factors alongside technical development.",
+                        question: "What does the passage suggest about AI implementation?",
+                        options: [
+                            "It should focus solely on technical development",
+                            "It requires balancing benefits with ethical considerations",
+                            "It should be limited to healthcare applications",
+                            "It poses no significant risks"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        id: 4,
+                        passage: "Pre-flight briefings are an essential part of any successful cabin crew's day. These briefings allow the crew to form an action plan, share information with one another and check there is a mutual understanding of the shift ahead. Upon arrival at base you are required to: Check your schedule for any updates or amends, Read the latest company news and safety updates on your handheld device. It is also advisable to remind yourself of the safety procedures for the aircraft you are flying on that day. You will then attend the pre-flight briefing which is overseen by the senior cabin crew member. Everyone will be asked to demonstrate that they have got their ID, passports and manuals with them.",
+                        question: "According to the passage, which one of the following is a reason for having a pre-flight briefing?",
+                        options: [
+                            "To give crew members updated schedules",
+                            "To allow the crew to get acquainted with one another",
+                            "To share important company news",
+                            "To find out which base the crew will be working from"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        id: 5,
+                        passage: "Renewable energy sources such as solar, wind, and hydroelectric power are becoming increasingly cost-effective alternatives to traditional fossil fuels. Government incentives and technological improvements have driven down installation costs while improving efficiency. Many countries are setting ambitious targets for renewable energy adoption as part of their climate change mitigation strategies. The transition requires significant infrastructure investments but promises long-term environmental and economic benefits.",
+                        question: "What has contributed to the cost-effectiveness of renewable energy?",
+                        options: [
+                            "Reduced demand for energy",
+                            "Government incentives and technological improvements",
+                            "Increased fossil fuel prices",
+                            "Environmental regulations only"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        id: 6,
+                        passage: "Urban planning faces unique challenges in the 21st century as cities grow rapidly and populations become increasingly concentrated in metropolitan areas. Sustainable development requires balancing economic growth with environmental protection and social equity. Smart city initiatives use technology to optimize resource usage, reduce traffic congestion, and improve quality of life for residents. Success depends on community engagement and integrated approaches that consider transportation, housing, and green spaces collectively.",
+                        question: "What does sustainable urban development require according to the passage?",
+                        options: [
+                            "Focus only on economic growth",
+                            "Balancing economic, environmental, and social factors",
+                            "Prioritizing technology over community needs",
+                            "Concentrating solely on transportation issues"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        id: 7,
+                        passage: "The human brain's capacity for learning and adaptation continues to fascinate researchers. Neuroplasticity, the brain's ability to reorganize and form new neural connections, occurs throughout life but is most pronounced during childhood and adolescence. This discovery has revolutionized approaches to education, rehabilitation, and cognitive enhancement. Understanding how the brain learns helps educators develop more effective teaching methods and supports individuals recovering from brain injuries.",
+                        question: "When is neuroplasticity most pronounced?",
+                        options: [
+                            "During adulthood",
+                            "During childhood and adolescence",
+                            "During old age",
+                            "It remains constant throughout life"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        id: 8,
+                        passage: "Global supply chains have become increasingly complex, connecting manufacturers, suppliers, and consumers across continents. This interconnectedness provides cost advantages and access to diverse markets but also creates vulnerabilities. Recent disruptions have highlighted the importance of supply chain resilience and the need for companies to diversify their supplier base. Digital technologies are being deployed to improve visibility and predict potential disruptions before they occur.",
+                        question: "What is a key benefit of complex global supply chains?",
+                        options: [
+                            "Reduced vulnerabilities",
+                            "Cost advantages and market access",
+                            "Simplified logistics",
+                            "Elimination of disruptions"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        id: 9,
+                        passage: "Space exploration has entered a new era with private companies joining government agencies in developing advanced spacecraft and missions. Commercial space flights, satellite deployments, and Mars exploration projects represent significant technological achievements. These ventures not only expand our understanding of the universe but also drive innovation in materials science, communications, and propulsion systems that benefit life on Earth.",
+                        question: "How do space exploration ventures benefit life on Earth?",
+                        options: [
+                            "By providing direct transportation services",
+                            "Through innovation in various technological fields",
+                            "By reducing Earth's population",
+                            "Through mining space resources"
+                        ],
+                        correct: 1
+                    },
+                    {
+                        id: 10,
+                        passage: "Mental health awareness has grown significantly in recent years, with society recognizing the importance of psychological well-being alongside physical health. Workplace stress, social media pressure, and life transitions contribute to mental health challenges across all age groups. Early intervention, professional support, and community programs play crucial roles in prevention and treatment. Reducing stigma around mental health issues encourages more people to seek help when needed.",
+                        question: "What encourages people to seek mental health support?",
+                        options: [
+                            "Increased workplace stress",
+                            "Social media pressure",
+                            "Reducing stigma around mental health issues",
+                            "Life transitions"
+                        ],
+                        correct: 2
+                    }
+                ]
+            }
+        };
+
+        // Validation Functions
+        function validateName(name) {
+            if (!name || name.trim().length < 2) {
+                return "Name must be at least 2 characters long";
+            }
+            if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
+                return "Name can only contain letters and spaces";
+            }
+            return null;
+        }
+
+        function validateEmail(email) {
+            if (!email || email.trim().length === 0) {
+                return "Email is required";
+            }
+            
+            // More comprehensive email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email.trim())) {
+                if (email.includes('@') && !email.includes('.')) {
+                    return "Please add a valid domain extension (e.g., .com, .in, .org)";
+                } else if (email.includes('@') && email.split('@')[1].split('.').pop().length < 2) {
+                    return "Domain extension must be at least 2 characters";
+                } else if (!email.includes('@')) {
+                    return "Email must contain @ symbol";
+                } else {
+                    return "Please enter a valid email address";
+                }
+            }
+            return null;
+        }
+
+        function validateAge(age) {
+            if (!age || age.trim().length === 0) {
+                return "Age is required";
+            }
+            const ageNum = parseInt(age);
+            if (isNaN(ageNum)) {
+                return "Age must be a valid number";
+            }
+            if (ageNum < 18) {
+                return "You must be at least 18 years old to take this test";
+            }
+            if (ageNum > 65) {
+                return "Please enter a valid age";
+            }
+            return null;
+        }
+
+        function validateMobile(mobile) {
+            if (!mobile || mobile.trim().length === 0) {
+                return "Mobile number is required";
+            }
+            // Remove spaces and special characters for validation
+            const cleanMobile = mobile.replace(/[\s\-\(\)]/g, '');
+            
+            // Check for valid Indian mobile number
+            if (!/^[6-9]\d{9}$/.test(cleanMobile)) {
+                if (cleanMobile.length !== 10) {
+                    return "Mobile number must be exactly 10 digits";
+                } else if (!/^[6-9]/.test(cleanMobile)) {
+                    return "Mobile number must start with 6, 7, 8, or 9";
+                } else if (!/^\d+$/.test(cleanMobile)) {
+                    return "Mobile number can only contain digits";
+                }
+            }
+            return null;
+        }
+
+        function validateGender(gender) {
+            if (!gender || gender.trim().length === 0) {
+                return "Please select your gender";
+            }
+            return null;
+        }
+
+        // Real-time validation setup
+        function setupFormValidation() {
+            const nameInput = document.getElementById('student-name');
+            const emailInput = document.getElementById('email');
+            const ageInput = document.getElementById('age');
+            const mobileInput = document.getElementById('mobile');
+            const genderSelect = document.getElementById('gender');
+
+            // Name validation
+            nameInput.addEventListener('input', function() {
+                const error = validateName(this.value);
+                updateFieldState('name', error, this);
+            });
+
+            nameInput.addEventListener('blur', function() {
+                const error = validateName(this.value);
+                updateFieldState('name', error, this);
+            });
+
+            // Email validation
+            emailInput.addEventListener('input', function() {
+                const error = validateEmail(this.value);
+                updateFieldState('email', error, this);
+            });
+
+            emailInput.addEventListener('blur', function() {
+                const error = validateEmail(this.value);
+                updateFieldState('email', error, this);
+            });
+
+            // Age validation
+            ageInput.addEventListener('input', function() {
+                const error = validateAge(this.value);
+                updateFieldState('age', error, this);
+            });
+
+            ageInput.addEventListener('blur', function() {
+                const error = validateAge(this.value);
+                updateFieldState('age', error, this);
+            });
+
+            // Mobile validation
+            mobileInput.addEventListener('input', function() {
+                const error = validateMobile(this.value);
+                updateFieldState('mobile', error, this);
+            });
+
+            mobileInput.addEventListener('blur', function() {
+                const error = validateMobile(this.value);
+                updateFieldState('mobile', error, this);
+            });
+
+            // Gender validation
+            genderSelect.addEventListener('change', function() {
+                const error = validateGender(this.value);
+                updateFieldState('gender', error, this);
+            });
+        }
+
+        function updateFieldState(fieldName, errorMessage, inputElement) {
+            const errorElement = document.getElementById(`${fieldName}-error`);
+            
+            if (errorMessage) {
+                // Show error
+                inputElement.classList.remove('valid');
+                inputElement.classList.add('error');
+                errorElement.textContent = errorMessage;
+                errorElement.classList.add('show');
+                validationState[fieldName] = false;
+            } else {
+                // Show valid
+                inputElement.classList.remove('error');
+                inputElement.classList.add('valid');
+                errorElement.classList.remove('show');
+                validationState[fieldName] = true;
+            }
+            
+            updateNextButton();
+        }
+
+        function updateNextButton() {
+            const nextBtn = document.getElementById('reg-next-btn');
+            const allValid = Object.values(validationState).every(valid => valid);
+            nextBtn.disabled = !allValid;
+        }
+
+        // Authentication
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const sapId = document.getElementById('sap-id').value;
+            const password = document.getElementById('password').value;
+            
+            if (sapId === '2021001' && password === 'password123') {
+                currentUser = { sapId: sapId, name: 'Ravich Kumar' };
+                document.getElementById('user-name').textContent = currentUser.name;
+                navigateToPage('dashboard');
+            } else {
+                document.getElementById('error-message').style.display = 'block';
+            }
+        });
+
+        // Enhanced Navigation with smooth transitions
+        function navigateToPage(pageId) {
+            const currentPageElement = document.getElementById(currentPage);
+            const targetPageElement = document.getElementById(pageId);
+            
+            // Add fade out effect
+            currentPageElement.classList.add('fade-out');
+            
+            setTimeout(() => {
+                // Hide all pages
+                const pages = ['login-page', 'dashboard', 'registration', 'instructions', 'test-interface', 'thank-you'];
+                pages.forEach(page => {
+                    document.getElementById(page).classList.remove('show');
+                    document.getElementById(page).classList.remove('fade-out', 'fade-in');
+                });
+                
+                // Show header for all pages except login
+                if (pageId !== 'login-page') {
+                    document.getElementById('header').classList.add('show');
+                } else {
+                    document.getElementById('header').classList.remove('show');
+                }
+                
+                // Show selected page
+                if (pageId === 'login-page') {
+                    targetPageElement.style.display = 'flex';
+                } else {
+                    targetPageElement.classList.add('show');
+                }
+                
+                // Add fade in effect
+                targetPageElement.classList.add('fade-in');
+                currentPage = pageId;
+                
+                // Setup validation for registration
+                if (pageId === 'registration') {
+                    setupFormValidation();
+                }
+
+                // Show/hide buttons based on page
+                const finishButton = document.getElementById('finish-test-fixed');
+                const fullscreenButton = document.getElementById('fullscreen-btn');
+                
+                if (pageId === 'test-interface') {
+                    if (finishButton) finishButton.style.display = 'block';
+                    if (fullscreenButton) updateFullscreenButton();
+                } else {
+                    if (finishButton) finishButton.style.display = 'none';
+                    if (fullscreenButton) fullscreenButton.style.display = 'none';
+                }
+            }, 150);
+        }
+
+        function startTest(testId) {
+            currentTest = testData[testId];
+            navigateToPage('registration');
+        }
+
+        function proceedToTest() {
+            // Save registration data
+            const formData = {
+                name: document.getElementById('student-name').value,
+                email: document.getElementById('email').value,
+                age: document.getElementById('age').value,
+                gender: document.getElementById('gender').value,
+                mobile: document.getElementById('mobile').value
+            };
+            
+            currentUser = { ...currentUser, ...formData };
+            
+            initializeTest();
+            navigateToPage('test-interface');
+            
+            // Request fullscreen
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+        }
+
+        function initializeTest() {
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            visitedQuestions = new Set([0]); // Mark first question as visited
+            testStartTime = Date.now();
+            timeRemaining = currentTest.duration;
+            tabSwitchCount = 0;
+            fullScreenWarnings = 0;
+            
+            // Set up test header
+            document.getElementById('test-title').textContent = currentTest.name;
+            document.getElementById('test-details').textContent = `Question 1 of ${currentTest.totalQuestions} | Difficulty: ${currentTest.difficulty}`;
+            
+            // Set up question navigator
+            setupQuestionNavigator();
+            
+            // Load first question
+            loadQuestion();
+            
+            // Start timer
+            startTimer();
+            
+            // Set up anti-cheating measures
+            setupAntiCheating();
+        }
+
+        function setupQuestionNavigator() {
+            const container = document.getElementById('question-numbers');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= currentTest.totalQuestions; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'question-btn';
+                btn.textContent = i;
+                btn.onclick = () => goToQuestion(i - 1);
+                container.appendChild(btn);
+            }
+            updateQuestionNavigator();
+        }
+
+        function updateQuestionNavigator() {
+            const buttons = document.querySelectorAll('.question-btn');
+            buttons.forEach((btn, index) => {
+                btn.classList.remove('current', 'answered', 'visited');
+                
+                if (index === currentQuestionIndex) {
+                    btn.classList.add('current');
+                } else if (userAnswers[index] !== undefined) {
+                    btn.classList.add('answered'); // Green for answered
+                } else if (visitedQuestions.has(index)) {
+                    btn.classList.add('visited'); // Orange for visited but not answered
+                }
+                // White (default) for unvisited questions
+            });
+            
+            // Update navigation buttons
+            document.getElementById('prev-question-btn').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-question-btn').disabled = currentQuestionIndex === currentTest.totalQuestions - 1;
+        }
+
+        function loadQuestion() {
+            const question = currentTest.questions[currentQuestionIndex];
+            document.getElementById('question-number').textContent = `Question ${currentQuestionIndex + 1}`;
+            document.getElementById('test-details').textContent = `Question ${currentQuestionIndex + 1} of ${currentTest.totalQuestions} | Difficulty: ${currentTest.difficulty}`;
+            
+            const optionsContainer = document.getElementById('question-options');
+            const codeContainer = document.getElementById('code-editor-container');
+            const testCasesContainer = document.getElementById('test-cases-container');
+            
+            // Clear previous content
+            optionsContainer.innerHTML = '';
+            codeContainer.innerHTML = '';
+            testCasesContainer.innerHTML = '';
+            
+            if (currentTest.type === 'coding') {
+                // Enhanced Coding question
+                document.getElementById('question-text').innerHTML = `
+                    <h4 style="color: #1e3a8a; font-size: 24px; margin-bottom: 15px;">${question.title}</h4>
+                    <p style="margin-bottom: 20px;">${question.description}</p>
+                    <div style="margin: 20px 0;">
+                        <strong style="color: #1e3a8a;">Example:</strong><br>
+                        <pre style="background: #f8fafc; padding: 15px; border-radius: 8px; white-space: pre-wrap; margin-top: 10px; border: 1px solid #e5e5e5;">${question.example}</pre>
+                    </div>
+                    <div>
+                        <strong style="color: #1e3a8a;">Constraints:</strong><br>
+                        <pre style="background: #f8fafc; padding: 15px; border-radius: 8px; white-space: pre-wrap; margin-top: 10px; border: 1px solid #e5e5e5;">${question.constraints}</pre>
+                    </div>
+                `;
+                
+                // Create enhanced code editor
+                codeContainer.innerHTML = `
+                    <div class="code-editor">
+                        <div class="code-header">
+                            <span>Code Editor</span>
+                            <select class="language-select">
+                                <option value="cpp">C++</option>
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                            </select>
+                        </div>
+                        <textarea class="code-textarea" id="code-input" placeholder="Write your code here...">${question.starterCode}</textarea>
+                        <div class="code-actions">
+                            <button class="run-btn" onclick="runCode()">Run</button>
+                            <button class="submit-code-btn" onclick="submitCode()">Submit</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add test cases section
+                if (question.testCases) {
+                    testCasesContainer.innerHTML = `
+                        <div class="test-cases">
+                            <h5>Test Cases</h5>
+                            ${question.testCases.map((testCase, index) => `
+                                <div class="test-case">
+                                    <div class="test-case-label">Test Case ${index + 1}:</div>
+                                    <div class="test-case-content">Input: ${testCase.input}</div>
+                                    <div class="test-case-content">Expected Output: ${testCase.output}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Load previous code if exists
+                if (userAnswers[currentQuestionIndex]) {
+                    document.getElementById('code-input').value = userAnswers[currentQuestionIndex];
+                }
+            } else {
+                // Multiple choice question
+                if (currentTest.type === 'verbal' && question.passage) {
+                    document.getElementById('question-text').innerHTML = `
+                        <div style="background: #f8fafc; padding: 25px; border-radius: 10px; margin-bottom: 25px; border: 2px solid #e5e5e5;">
+                            <strong style="color: #1e3a8a; font-size: 18px;">Read the passage and answer the associated questions:</strong><br><br>
+                            <div style="line-height: 1.7;">${question.passage}</div>
+                        </div>
+                        <strong style="font-size: 18px; color: #333;">${question.question}</strong>
+                    `;
+                } else {
+                    document.getElementById('question-text').innerHTML = `<strong style="font-size: 18px;">${question.question}</strong>`;
+                }
+                
+                const optionsList = document.createElement('ul');
+                optionsList.className = 'options';
+                
+                question.options.forEach((option, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'option';
+                    
+                    const label = document.createElement('label');
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = 'question-option';
+                    radio.value = index;
+                    radio.addEventListener('change', () => selectAnswer(index));
+                    
+                    if (userAnswers[currentQuestionIndex] === index) {
+                        radio.checked = true;
+                        label.classList.add('selected');
+                    }
+                    
+                    label.appendChild(radio);
+                    label.appendChild(document.createTextNode(option));
+                    li.appendChild(label);
+                    optionsList.appendChild(li);
+                });
+                
+                optionsContainer.appendChild(optionsList);
+            }
+            
+            updateQuestionNavigator();
+        }
+
+        function selectAnswer(answerIndex) {
+            userAnswers[currentQuestionIndex] = answerIndex;
+            
+            // Update visual selection
+            const labels = document.querySelectorAll('.option label');
+            labels.forEach(label => label.classList.remove('selected'));
+            labels[answerIndex].classList.add('selected');
+            
+            updateQuestionNavigator();
+            saveProgress();
+        }
+
+        function runCode() {
+            const code = document.getElementById('code-input').value;
+            userAnswers[currentQuestionIndex] = code;
+            saveProgress();
+            
+            // Simulate code execution
+            const successMessage = document.createElement('div');
+            successMessage.className = 'success-message';
+            successMessage.textContent = 'Code executed successfully! Check the results below.';
+            successMessage.style.display = 'block';
+            
+            const codeEditor = document.querySelector('.code-editor');
+            codeEditor.appendChild(successMessage);
+            
+            setTimeout(() => {
+                successMessage.remove();
+            }, 3000);
+        }
+
+        function submitCode() {
+            const code = document.getElementById('code-input').value;
+            userAnswers[currentQuestionIndex] = code;
+            saveProgress();
+            updateQuestionNavigator();
+            
+            const successMessage = document.createElement('div');
+            successMessage.className = 'success-message';
+            successMessage.textContent = 'Code submitted successfully!';
+            successMessage.style.display = 'block';
+            
+            const codeEditor = document.querySelector('.code-editor');
+            codeEditor.appendChild(successMessage);
+            
+            setTimeout(() => {
+                successMessage.remove();
+            }, 2000);
+        }
+
+        function goToQuestion(index) {
+            if (currentTest.type === 'coding') {
+                const code = document.getElementById('code-input')?.value;
+                if (code) {
+                    userAnswers[currentQuestionIndex] = code;
+                }
+            }
+            
+            currentQuestionIndex = index;
+            visitedQuestions.add(index); // Mark question as visited
+            loadQuestion();
+            saveProgress();
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                goToQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentTest.totalQuestions - 1) {
+                goToQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function startTimer() {
+            testTimer = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(testTimer);
+                    autoSubmitTest();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const hours = Math.floor(timeRemaining / 3600);
+            const minutes = Math.floor((timeRemaining % 3600) / 60);
+            const seconds = timeRemaining % 60;
+            
+            const timeString = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const timerElement = document.getElementById('test-timer');
+            timerElement.textContent = timeString;
+            
+            // Change color when time is running out - RED when less than 1 minute
+            if (timeRemaining < 60) {
+                timerElement.className = 'test-timer timer-critical';
+                timerElement.style.background = '#dc2626'; // Red background
+            } else if (timeRemaining < 300) {
+                timerElement.className = 'test-timer timer-warning';
+                timerElement.style.background = '#f59e0b'; // Orange background
+            } else {
+                timerElement.style.background = '#f59e0b'; // Default orange
+            }
+        }
+
+        function finishTest() {
+            if (confirm('Are you sure you want to finish the test? You cannot change your answers after submission.')) {
+                submitTest();
+            }
+        }
+
+        function submitTest() {
+            // Save final answer if in coding mode
+            if (currentTest.type === 'coding') {
+                const code = document.getElementById('code-input')?.value;
+                if (code) {
+                    userAnswers[currentQuestionIndex] = code;
+                }
+            }
+            
+            clearInterval(testTimer);
+            
+            // Save test data to localStorage for teacher to view
+            saveTestResults();
+            
+            // Show thank you page
+            showThankYouPage();
+            navigateToPage('thank-you');
+            
+            // Exit fullscreen
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+
+        function autoSubmitTest() {
+            alert('Time is up! Your test has been automatically submitted.');
+            submitTest();
+        }
+
+        function saveTestResults() {
+            const testResult = {
+                studentName: currentUser.name,
+                studentEmail: currentUser.email,
+                studentAge: currentUser.age,
+                studentGender: currentUser.gender,
+                studentMobile: currentUser.mobile,
+                testName: currentTest.name,
+                testType: currentTest.type,
+                submissionTime: new Date().toISOString(),
+                timeTaken: formatTime(currentTest.duration - timeRemaining),
+                totalQuestions: currentTest.totalQuestions,
+                questionsAnswered: Object.keys(userAnswers).length,
+                answers: userAnswers,
+                visitedQuestions: Array.from(visitedQuestions),
+                score: calculateScore()
+            };
+            
+            // Save to localStorage (in real app, this would be sent to server)
+            let allResults = JSON.parse(localStorage.getItem('testResults') || '[]');
+            allResults.push(testResult);
+            localStorage.setItem('testResults', JSON.stringify(allResults));
+        }
+
+        function calculateScore() {
+            let correctAnswers = 0;
+            
+            if (currentTest.type !== 'coding') {
+                for (let i = 0; i < currentTest.totalQuestions; i++) {
+                    if (userAnswers[i] === currentTest.questions[i].correct) {
+                        correctAnswers++;
+                    }
+                }
+            } else {
+                // For coding, give partial credit based on answered questions
+                correctAnswers = Math.floor(Object.keys(userAnswers).length * 0.75);
+            }
+            
+            return Math.round((correctAnswers / currentTest.totalQuestions) * 100);
+        }
+
+        function showThankYouPage() {
+            document.getElementById('submitted-test-name').textContent = currentTest.name;
+            document.getElementById('submitted-student-name').textContent = currentUser.name;
+            document.getElementById('submission-time').textContent = new Date().toLocaleString();
+            document.getElementById('submitted-time-taken').textContent = formatTime(currentTest.duration - timeRemaining);
+            document.getElementById('submitted-questions-answered').textContent = `${Object.keys(userAnswers).length}/${currentTest.totalQuestions}`;
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Fullscreen functionality
+        function updateFullscreenButton() {
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            if (currentPage === 'test-interface' && currentTest) {
+                if (!document.fullscreenElement) {
+                    fullscreenBtn.style.display = 'block';
+                } else {
+                    fullscreenBtn.style.display = 'none';
+                }
+            }
+        }
+
+        function enterFullscreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                currentUser = null;
+                navigateToPage('login-page');
+            }
+        }
+
+        // Enhanced Anti-cheating measures
+        function setupAntiCheating() {
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', handleKeyPress);
+        }
+
+        function handleVisibilityChange() {
+            if (document.hidden && currentTest) {
+                tabSwitchCount++;
+                if (tabSwitchCount <= 2) {
+                    showWarning(`You have switched tabs or minimized the browser. This is warning ${tabSwitchCount}/2. If you continue to switch tabs, your test will be auto-submitted.`);
+                } else {
+                    alert('You have exceeded the maximum number of tab switches. Your test will now be submitted.');
+                    submitTest();
+                }
+            }
+        }
+
+        function handleFullscreenChange() {
+            updateFullscreenButton();
+            
+            if (!document.fullscreenElement && currentTest) {
+                fullScreenWarnings++;
+                if (fullScreenWarnings <= 2) {
+                    showWarning(`Please return to full-screen mode. You have 10 seconds before your test is auto-submitted. Warning ${fullScreenWarnings}/2.`);
+                    setTimeout(() => {
+                        if (!document.fullscreenElement && currentTest) {
+                            alert('You did not return to full-screen mode. Your test will now be submitted.');
+                            submitTest();
+                        }
+                    }, 10000);
+                }
+            }
+        }
+
+        function handleKeyPress(e) {
+            // Prevent common cheating shortcuts
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.key === 'u') ||
+                (e.ctrlKey && e.key === 's') ||
+                (e.ctrlKey && e.key === 'a') ||
+                (e.ctrlKey && e.key === 'c' && currentTest?.type !== 'coding') ||
+                (e.ctrlKey && e.key === 'v' && currentTest?.type !== 'coding')) {
+                e.preventDefault();
+                showWarning('This action is not allowed during the test.');
+            }
+        }
+
+        function showWarning(message) {
+            document.getElementById('warning-text').innerHTML = message;
+            document.getElementById('warning-modal').style.display = 'block';
+        }
+
+        function closeWarning() {
+            document.getElementById('warning-modal').style.display = 'none';
+        }
+
+        // Progress saving
+        function saveProgress() {
+            if (currentTest) {
+                const progressData = {
+                    testId: currentTest.id,
+                    currentQuestionIndex: currentQuestionIndex,
+                    userAnswers: userAnswers,
+                    visitedQuestions: Array.from(visitedQuestions),
+                    timeRemaining: timeRemaining,
+                    testStartTime: testStartTime
+                };
+                localStorage.setItem('testProgress', JSON.stringify(progressData));
+            }
+        }
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            navigateToPage('login-page');
+        });
+
+        // Prevent page refresh during test
+        window.addEventListener('beforeunload', function(e) {
+            if (currentTest && testTimer) {
+                e.preventDefault();
+                e.returnValue = 'Are you sure you want to leave? Your test progress will be saved.';
+                return 'Are you sure you want to leave? Your test progress will be saved.';
+            }
+        });
+    </script>
+</body>
+</html>
