@@ -1,0 +1,31 @@
+{
+  "name": "placement-training-portal",
+  "version": "2.0.0",
+  "description": "Secure student and teacher assessment portal for placement training",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js",
+    "check": "node --check server.js && node --check src/app.js && node --check src/auth.js && node --check src/config.js && node --check src/db.js && node --check src/domain.js && node --check scripts/migrate.js && node --check scripts/seed.js && node --check public/js/api.js && node --check public/js/student.js && node --check public/js/teacher.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Portal · Placement Portal</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="/js/api.js" defer></script>
+  <script src="/js/student.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">Placement Portal</a>
+    <nav class="header-actions">
+      <span id="student-name" class="user-label"></span>
+      <button id="logout-button" class="button ghost hidden" type="button">Log out</button>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <div id="message" class="message hidden" role="status" aria-live="polite"></div>
+
+    <section id="auth-view">
+      <div class="page-heading">
+        <p class="eyebrow">Student access</p>
+        <h1>Continue your placement preparation</h1>
+      </div>
+      <div class="auth-grid">
+        <form id="login-form" class="panel form-stack">
+          <h2>Sign in</h2>
+          <label>Email or SAP ID
+            <input name="identifier" autocomplete="username" required minlength="4">
+          </label>
+          <label>Password
+            <input name="password" type="password" autocomplete="current-password" required minlength="8">
+          </label>
+          <button class="button primary" type="submit">Sign in</button>
+        </form>
+
+        <form id="register-form" class="panel form-stack">
+          <h2>Create student account</h2>
+          <label>Full name
+            <input name="name" autocomplete="name" required minlength="2" maxlength="100">
+          </label>
+          <label>Email
+            <input name="email" type="email" autocomplete="email" required>
+          </label>
+          <label>SAP ID
+            <input name="sapId" autocomplete="username" required minlength="4" maxlength="30">
+          </label>
+          <label>Password
+            <input name="password" type="password" autocomplete="new-password" required minlength="8">
+          </label>
+          <button class="button secondary" type="submit">Register</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="dashboard-view" class="hidden">
+      <div class="page-heading split-heading">
+        <div>
+          <p class="eyebrow">Student dashboard</p>
+          <h1 id="welcome-heading">Welcome</h1>
+        </div>
+        <button id="refresh-button" class="button secondary" type="button">Refresh</button>
+      </div>
+      <div class="dashboard-grid">
+        <section class="panel">
+          <div class="section-heading">
+            <h2>Available tests</h2>
+            <span class="status-dot">Live</span>
+          </div>
+          <div id="test-list" class="card-list"></div>
+        </section>
+        <section class="panel">
+          <h2>Recent results</h2>
+          <div id="result-list" class="card-list"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="test-view" class="hidden">
+      <div class="test-header">
+        <div>
+          <p class="eyebrow">Assessment in progress</p>
+          <h1 id="test-title">Test</h1>
+        </div>
+        <div id="timer" class="timer" aria-live="polite">00:00</div>
+      </div>
+      <form id="test-form" class="form-stack">
+        <div id="question-list" class="question-list"></div>
+        <div class="form-actions">
+          <button id="cancel-test" class="button ghost" type="button">Cancel</button>
+          <button class="button primary" type="submit">Submit test</button>
+        </div>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

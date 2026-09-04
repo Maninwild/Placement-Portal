@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teacher Portal · Placement Portal</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="/js/api.js" defer></script>
+  <script src="/js/teacher.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">Placement Portal</a>
+    <nav class="header-actions">
+      <span id="teacher-name" class="user-label"></span>
+      <button id="logout-button" class="button ghost hidden" type="button">Log out</button>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <div id="message" class="message hidden" role="status" aria-live="polite"></div>
+
+    <section id="login-view" class="narrow-view">
+      <div class="page-heading">
+        <p class="eyebrow">Teacher access</p>
+        <h1>Manage placement assessments</h1>
+      </div>
+      <form id="login-form" class="panel form-stack">
+        <label>Email or SAP ID
+          <input name="identifier" autocomplete="username" required minlength="4">
+        </label>
+        <label>Password
+          <input name="password" type="password" autocomplete="current-password" required minlength="8">
+        </label>
+        <button class="button primary" type="submit">Sign in</button>
+      </form>
+    </section>
+
+    <section id="dashboard-view" class="hidden">
+      <div class="page-heading">
+        <p class="eyebrow">Teacher dashboard</p>
+        <h1>Create tests and review performance</h1>
+      </div>
+      <div class="dashboard-grid teacher-grid">
+        <form id="create-test-form" class="panel form-stack">
+          <h2>New assessment</h2>
+          <div class="form-row">
+            <label>Test title
+              <input name="title" required minlength="3" maxlength="160">
+            </label>
+            <label>Duration in minutes
+              <input name="durationMinutes" type="number" min="1" max="240" value="30" required>
+            </label>
+          </div>
+          <div class="section-heading">
+            <h3>Questions</h3>
+            <button id="add-question" class="button small secondary" type="button">Add question</button>
+          </div>
+          <div id="question-builder" class="question-list"></div>
+          <button class="button primary" type="submit">Publish test</button>
+        </form>
+
+        <section class="panel">
+          <div class="section-heading">
+            <h2>Student results</h2>
+            <button id="refresh-results" class="button small secondary" type="button">Refresh</button>
+          </div>
+          <form id="search-form" class="search-row">
+            <input name="query" aria-label="Search students" placeholder="Name email or SAP ID">
+            <button class="button secondary" type="submit">Search</button>
+          </form>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Student</th><th>Test</th><th>Score</th><th>Submitted</th></tr>
+              </thead>
+              <tbody id="results-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
